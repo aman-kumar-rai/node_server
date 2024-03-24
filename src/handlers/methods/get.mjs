@@ -1,16 +1,15 @@
-import { readFile } from "node:fs/promises";
+import { read } from "../../util/file.mjs";
 
 // res.setHeader("X-Content-Type-Options", "nosniff");
 
 const getHandler = (req, res) => {
-    const filePath = `${process.cwd()}/public${req.url}`;
-    readFile(filePath, {
-        encoding: "utf-8"
-    }).then((fileContent) => {
-        res.end(fileContent);
-    }).catch((error) => {
-        console.error(error);
-        res.end(`Server error`);
+    read(`public${req.url}`).then(({error, data}) => {
+        if(error) {
+            res.end(`Server error: 500`)
+        }
+        else {
+            res.end(data);
+        }
     })
 }
 
